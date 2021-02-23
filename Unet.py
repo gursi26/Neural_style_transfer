@@ -2,13 +2,13 @@ import torch
 
 class UNET_Gen(torch.nn.Module):
 
-  def __init__(self):
+  def __init__(self, dev):
     super(UNET_Gen,self).__init__()
-
+    self.dev = dev
     self.start = torch.nn.Sequential(
         torch.nn.Conv2d(3, 64, kernel_size=4, stride=2, padding=0),
         torch.nn.ReLU()
-    )
+    ).to(self.dev)
 
     self.downsample = [
                        self.convblock(64,128),
@@ -28,14 +28,14 @@ class UNET_Gen(torch.nn.Module):
     self.final = torch.nn.Sequential(
         torch.nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2),
         torch.nn.Tanh()
-    )
+    ).to(self.dev)
 
   def convblock(self, in_c, out_c, k=4, s=2, p=0):
     return torch.nn.Sequential(
         torch.nn.Conv2d(in_c, out_c, kernel_size=k, stride=s, padding=p, bias=False),
         torch.nn.InstanceNorm2d(out_c, affine=True),
         torch.nn.ReLU()
-    )
+    ).to(self.dev)
     
 
   def convtransposeblock(self, in_c, out_c, k=4, s=2, p=0):
@@ -43,7 +43,7 @@ class UNET_Gen(torch.nn.Module):
         torch.nn.ConvTranspose2d(in_c, out_c, kernel_size=k, stride=s, padding=p, bias=False),
         torch.nn.InstanceNorm2d(out_c, affine=True),
         torch.nn.ReLU()
-    )
+    ).to(self.dev)
 
 
   def forward(self,x):
