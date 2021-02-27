@@ -21,9 +21,7 @@ class vgg(torch.nn.Module):
             if str(layer_number) in self.activation_layers : 
                 activations.append(x)
 
-        vgg_outputs = namedtuple("VggOutputs", ['relu1_2', 'relu2_2', 'relu3_3', 'relu4_3'])
-        out = vgg_outputs(activations[0], activations[1], activations[2], activations[3])
-        return out
+        return activations
 
 
 def test():
