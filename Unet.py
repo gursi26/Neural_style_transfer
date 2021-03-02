@@ -66,12 +66,10 @@ class UNET_Gen(torch.nn.Module):
     out = self.midlayer1(out)
     out = self.midlayer2(out)
     
-    out = torch.cat([skips[0],out], dim=1)
-    out = self.upsample1(out)
-    out = torch.cat([skips[1],out], dim=1)
-    out = self.upsample2(out)
-    out = torch.cat([skips[2],out], dim=1)
-    out = self.upsample3(out)
+    upsample_layers = [self.upsample1, self.upsample2, self.upsample3]
+    for i in range(3):
+      out = torch.cat([out,skips[i]], dim=1)
+      out = upsample_layers[i](out)
 
     out = self.final(out)
 
@@ -86,5 +84,3 @@ def test():
     output = model.forward(noise)
     print('Input shape : ', noise.shape)
     print('Output shape : ', output.shape)
-
-test()
